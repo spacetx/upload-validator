@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from glob import glob
+from json import dumps
 
 from sys import argv
 from sys import exit
@@ -17,13 +18,21 @@ def find_experiment_json(filenames):
 
 
 def validate_experiment_json(filename):
-    if validate_sptx.validate(filename):
-        return 0
-    return 1
+    rv = {
+        "validation_state": "VALID"
+        "validation_errors": []
+    }
+    if not validate_sptx.validate(filename):
+        rv["validation_state"] = "INVALID"
+        rv["validation_errors"].append({
+            "user_friendly_message": "FIXME",
+            "filename": filename,
+        })
+    return dumps(rv)
 
 
 if __name__ == "__main__":
-    exit(
+    print(
         validate_experiment_json(
             find_experiment_json(argv[1:])
         )
